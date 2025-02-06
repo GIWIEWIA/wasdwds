@@ -1,0 +1,80 @@
+<div class="h-screen flex">
+  <!-- Sidebar -->
+  <div class="w-[300px] h-full bg-[#2784C2] flex flex-col justify-start items-center text-white p-5">
+    <img src="../../assets/img/pat_logo.png" alt="Logo" class="w-[200px] h-[200px] mb-5">
+    <p class="text-center text-l">การท่าเรือแห่งประเทศไทย</p>
+  </div>
+
+  <div class="flex w-full items-center justify-center gap-12">
+    <!-- Upload Box -->
+    <div class="bg-gray-200 p-5 rounded-lg shadow-md w-2/5 h-1/2 flex flex-col items-center overflow-y-auto">
+      <h2 class="text-center font-semibold text-xl mb-4">Upload file</h2>
+      <p class="text-center text-l mb-4">Drag & drop files here or click to upload</p>
+
+      <div
+        class="bg-white p-5 rounded-lg w-11/12 h-1/2 mb-5 flex flex-col items-center overflow-y-auto border-2 border-gray-300"
+        (dragover)="onDragOver($event)" (drop)="onDrop($event)" (click)="triggerFileUpload()">
+
+        <!-- Error message -->
+        <div *ngIf="errorMessage" class="text-red-500 text-center mb-2">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Input file (ซ่อน) -->
+        <input type="file" (change)="handleFileInput($event)" multiple class="hidden" #fileInput>
+
+        <!-- แสดงรายการไฟล์ที่เลือก -->
+        <div *ngFor="let file of selectedFiles; let i = index"
+          class="text-black w-full flex justify-between items-center mb-2 text-l p-1">
+          <span>{{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)</span>
+          <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+            (click)="removeFile($event, i)">
+            remove
+          </button>
+        </div>
+
+        <!-- ข้อความและไอคอนเมื่อไม่มีไฟล์ -->
+        <div class="flex items-center flex-col gap-5">
+          <div *ngIf="selectedFiles.length === 0" class="text-gray-400 text-center">
+            No files added. Drag and drop files here or click Add File.
+          </div>
+          <div *ngIf="selectedFiles.length === 0" class="w-14 h-14">
+            <img src="../../assets/img/icon_uploadfile.png" alt="Upload Icon">
+          </div>
+        </div>
+      </div>
+      <button class="bg-[#2784C2] text-white rounded-lg w-40 h-12 text-center" (click)="submitFiles()">Submit</button>
+    </div>
+
+    <!-- Listfile Box -->
+    <div class="bg-gray-200 p-5 rounded-lg shadow-md w-2/5 h-1/2 flex flex-col items-center">
+      <h2 class="text-center font-semibold text-xl mb-4">Listfile</h2>
+      <div class="bg-white p-5 rounded-lg w-11/12 h-5/6 flex flex-col overflow-y-auto border-2 border-gray-300">
+
+        <!-- Images -->
+        <ul class="list-disc list-inside">
+          <li *ngFor="let file of fileCategories.images" class="text-black flex items-center gap-3 mb-2">
+            <img [src]="getFileIcon(file.name)" alt="File Icon" class="w-6 h-6">
+            <span>{{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)</span>
+          </li>
+        </ul>
+
+        <!-- Documents -->
+        <ul class="list-disc list-inside">
+          <li *ngFor="let file of fileCategories.documents" class="text-black flex items-center gap-3 mb-2">
+            <img [src]="getFileIcon(file.name)" alt="File Icon" class="w-6 h-6">
+            <span>{{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)</span>
+          </li>
+        </ul>
+
+        <!-- Others -->
+        <ul class="list-disc list-inside">
+          <li *ngFor="let file of fileCategories.others" class="text-black flex items-center gap-3 mb-2">
+            <img [src]="getFileIcon(file.name)" alt="File Icon" class="w-6 h-6">
+            <span>{{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

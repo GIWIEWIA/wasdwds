@@ -1,0 +1,17 @@
+/* ซ่อน scrollbar แต่ยังสามารถเลื่อนได้ */
+div.overflow-y-auto {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  div.overflow-y-auto::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  ul {
+    scrollbar-width: none; /* สำหรับ Firefox */
+    -ms-overflow-style: none; /* สำหรับ Internet Explorer และ Edge */
+  }
+  
+  ul::-webkit-scrollbar {
+    display: none; /* สำหรับ Chrome, Safari และ Edge */
+  }
