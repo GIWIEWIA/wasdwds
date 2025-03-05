@@ -1,80 +1,82 @@
-<div class="h-screen flex">
-  <!-- Sidebar -->
-  <div class="w-[300px] h-full bg-[#2784C2] flex flex-col justify-start items-center text-white p-5">
-    <img src="../../assets/img/pat_logo.png" alt="Logo" class="w-[200px] h-[200px] mb-5">
-    <p class="text-center text-l">การท่าเรือแห่งประเทศไทย</p>
-  </div>
+<body class="overflow-hidden">
+  <div class="min-h-screen w-screen flex bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="w-[250px] bg-blue-800 flex flex-col items-center text-white py-6 shadow-lg h-screen">
+      <img src="../../assets/img/pat_logo.png" alt="Logo" class="w-[100px] h-[100px] mb-4 rounded-lg shadow-md">
+      <p class="text-lg font-semibold">การท่าเรือแห่งประเทศไทย</p>
+      <button (click)="logout()" class="mt-auto text-red-400 hover:text-red-500 transition duration-200">
+        🚪 ออกจากระบบ
+      </button>
+    </aside>
 
-  <div class="flex w-full items-center justify-center gap-12">
-    <!-- Upload Box -->
-    <div class="bg-gray-200 p-5 rounded-lg shadow-md w-2/5 h-1/2 flex flex-col items-center overflow-y-auto">
-      <h2 class="text-center font-semibold text-xl mb-4">Upload file</h2>
-      <p class="text-center text-l mb-4">Drag & drop files here or click to upload</p>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col p-8 min-h-screen overflow-hidden">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold text-gray-700">📂 จัดการไฟล์</h1>
+        <button (click)="fileInput.click()"
+          class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 transition">
+          ➕ เพิ่มไฟล์
+        </button>
+        <input type="file" #fileInput (change)="onFilesSelected($event)" multiple hidden>
+      </div>
 
-      <div
-        class="bg-white p-5 rounded-lg w-11/12 h-1/2 mb-5 flex flex-col items-center overflow-y-auto border-2 border-gray-300"
-        (dragover)="onDragOver($event)" (drop)="onDrop($event)" (click)="triggerFileUpload()">
+      <!-- File Table -->
+      <div class="bg-white shadow-xl rounded-lg overflow-hidden flex-1">
+        <div
+          class="h-full max-h-[calc(100vh-180px)] overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr class="bg-gray-200 text-gray-600 uppercase text-sm">
+                <th class="p-3 text-left">📄 ไฟล์</th>
+                <th class="p-3 text-left">ประเภท</th>
+                <th class="p-3 text-left">ผู้ส่ง</th>
+                <th class="p-3 text-left">วันที่อัปโหลด</th>
+                <th class="p-3 text-left">สถานะ</th>
+                <th class="p-3 text-center">ดำเนินการ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let file of files" class="border-b last:border-b-0 hover:bg-gray-50 transition">
+                <td class="p-3">
+                  <!-- ถ้าไฟล์มี path ให้แสดงเป็นลิงค์ -->
+                  <a *ngIf="file.filePath" [href]="file.filePath" target="_blank" class="text-blue-500 hover:underline">
+                    {{ file.fileName }}
+                  </a>
+                  <!-- ถ้าไม่มี path ให้แสดงชื่อไฟล์เป็นเท็กซ์ -->
+                  <span *ngIf="!file.filePath" class="text-gray-400">{{ file.fileName }}</span>
+                </td>
 
-        <!-- Error message -->
-        <div *ngIf="errorMessage" class="text-red-500 text-center mb-2">
-          {{ errorMessage }}
-        </div>
 
-        <!-- Input file (ซ่อน) -->
-        <input type="file" (change)="handleFileInput($event)" multiple class="hidden" #fileInput>
 
-        <!-- แสดงรายการไฟล์ที่เลือก -->
-        <div *ngFor="let file of selectedFiles; let i = index"
-          class="text-black w-full flex justify-between items-center mb-2 text-l p-1">
-          <span>{{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)</span>
-          <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-            (click)="removeFile($event, i)">
-            remove
-          </button>
-        </div>
 
-        <!-- ข้อความและไอคอนเมื่อไม่มีไฟล์ -->
-        <div class="flex items-center flex-col gap-5">
-          <div *ngIf="selectedFiles.length === 0" class="text-gray-400 text-center">
-            No files added. Drag and drop files here or click Add File.
-          </div>
-          <div *ngIf="selectedFiles.length === 0" class="w-14 h-14">
-            <img src="../../assets/img/icon_uploadfile.png" alt="Upload Icon">
-          </div>
+                <td class="p-3">{{ file.fileType }}</td>
+                <td class="p-3">{{ file.senderEmail }}</td>
+                <td class="p-3">{{ file.uploadDate | date:'yyyy-MM-dd HH:mm' }}</td>
+
+                <td class="p-3">
+                  <span [ngClass]="{
+                      'bg-yellow-500 text-white px-2 py-1 rounded-full': file.status === 'PENDING',
+                      'bg-green-500 text-white px-2 py-1 rounded-full': file.status === 'CONFIRMED',
+                      'bg-red-500 text-white px-2 py-1 rounded-full': file.status === 'FAILED'
+                    }">
+                    {{ file.status }}
+                  </span>
+                </td>
+                <td class="p-3 flex justify-center gap-2">
+                  <!-- ปุ่มยืนยันจะปรากฏเมื่อสถานะเป็น Pending -->
+                  <button (click)="confirmFile(file)"
+                    class="px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
+                    [disabled]="file.status === 'CONFIRMED'">✅ ยืนยัน</button>
+                  <!-- ปุ่มลบ -->
+                  <button (click)="deleteFile(file)"
+                    class="px-3 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600 transition">🗑️ ลบ</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <button class="bg-[#2784C2] text-white rounded-lg w-40 h-12 text-center" (click)="submitFiles()">Submit</button>
-    </div>
-
-    <!-- Listfile Box -->
-    <div class="bg-gray-200 p-5 rounded-lg shadow-md w-2/5 h-1/2 flex flex-col items-center">
-      <h2 class="text-center font-semibold text-xl mb-4">Listfile</h2>
-      <div class="bg-white p-5 rounded-lg w-11/12 h-5/6 flex flex-col overflow-y-auto border-2 border-gray-300">
-
-        <!-- Images -->
-        <ul class="list-disc list-inside">
-          <li *ngFor="let file of fileCategories.images" class="text-black flex items-center gap-3 mb-2">
-            <img [src]="getFileIcon(file.name)" alt="File Icon" class="w-6 h-6">
-            <span>{{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)</span>
-          </li>
-        </ul>
-
-        <!-- Documents -->
-        <ul class="list-disc list-inside">
-          <li *ngFor="let file of fileCategories.documents" class="text-black flex items-center gap-3 mb-2">
-            <img [src]="getFileIcon(file.name)" alt="File Icon" class="w-6 h-6">
-            <span>{{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)</span>
-          </li>
-        </ul>
-
-        <!-- Others -->
-        <ul class="list-disc list-inside">
-          <li *ngFor="let file of fileCategories.others" class="text-black flex items-center gap-3 mb-2">
-            <img [src]="getFileIcon(file.name)" alt="File Icon" class="w-6 h-6">
-            <span>{{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)</span>
-          </li>
-        </ul>
-      </div>
-    </div>
+    </main>
   </div>
-</div>
+</body>

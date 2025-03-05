@@ -1,17 +1,33 @@
-/* ซ่อน scrollbar แต่ยังสามารถเลื่อนได้ */
-div.overflow-y-auto {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-  }
-  
-  div.overflow-y-auto::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-  ul {
-    scrollbar-width: none; /* สำหรับ Firefox */
-    -ms-overflow-style: none; /* สำหรับ Internet Explorer และ Edge */
-  }
-  
-  ul::-webkit-scrollbar {
-    display: none; /* สำหรับ Chrome, Safari และ Edge */
-  }
+table {
+  table-layout: fixed; /* ทำให้ช่องไม่ขยายตามข้อความ */
+  width: 100%;
+
+}
+
+td, th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+th {
+  text-align: center;
+  padding: 8px;
+  background-color: #f0f0f0;
+}
+
+td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  max-width: 200px; /* ปรับตามต้องการ */
+  text-align: center;
+}
+/* ซ่อน scrollbar */
+.overflow-y-auto::-webkit-scrollbar {
+  display: none; /* ซ่อน scrollbar */
+}
+
+/* ทำให้สามารถเลื่อนหน้าต่อได้ */
+.overflow-y-auto {
+  overflow-y: scroll; /* ให้ยังคงสามารถเลื่อนได้ */
+}

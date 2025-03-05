@@ -1,19 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginckanComponent } from './loginckan/loginckan.component';
-import { RegisterComponent } from './register/register.component';
-import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.component';
+import { LoginckanComponent } from './loginckan/loginckan.component';  // หน้า Login
+import { RegisterComponent } from './register/register.component';  // หน้า Register
+import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.component';  // หน้า Forgetpassword
 import { MainpageComponent } from './mainpage/mainpage.component';
+import { authGuard } from './auth.guard';  // ใช้ authGuard ในการป้องกัน
 
 
 const routes: Routes = [
-{ path: 'login', component: LoginckanComponent},
-{ path: 'register', component: RegisterComponent},
-{ path: 'forgetpassword', component: ForgetpasswordComponent},
-{ path: 'mainpage', component:MainpageComponent},
-
-
-
+  { path: '', redirectTo: '/login', pathMatch: 'full' },  // เริ่มต้นที่หน้า Login
+  { path: 'login', component: LoginckanComponent },  // หน้า Login
+  { path: 'register', component: RegisterComponent },  // หน้า Register
+  { path: 'forgetpassword', component: ForgetpasswordComponent },  // หน้า Forget Password
+  { path: 'mainpage' , component: MainpageComponent,canActivate: [authGuard]},
 
 ];
 
